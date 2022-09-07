@@ -1,41 +1,58 @@
 # SmallLox
-A small programming language Implementation based on the  Lox programming Language 
+A small programming language Implementation based on the  Lox programming Language. An overview of the small Lox programming language 
+
+# Overview of the Syntax 
 
 
+
+# Types
 
 ```python
-
-Sub-lox syntax
-
-# Types 
-
  var word  =  "hello"; //strings
  var age  =  20; // integers
  var weight =  20.0; // floats
  var TRUE =  true;
- var False = False;
+ var FALSE = False;
  var  none =  Nil;
+ 
+ ```
 
-var x =  10; // variable assisnment
-var y =  10; //variable assignment
+# Expressions and assignment and Operations
 
 ```python
 
-# Binary operations 
+var  x  = 10;
+var y  = 100;
+var addtogether =  x+y;
+var substract = x - y;
+var times =  x * y;
 
- x + y;
- x - y;
- x = y;
- x * y;
- 
-# Logicial  Operations
+var subtractfivefrom  = x-5;
+var addfive = x + 5;
+var isTrue = True;
+var isFalse = False;
+var none = nil;
 
-z > 10;
-z < 10;
-z<=y;
-z>=10
+x + y;
+x - y;
+x * y;
 
-# Control Flow
+x < y;
+x > y;
+x<=y
+
+var compareless  = x < y;
+var greaterthan = x > y;
+var lessthanequal = x<=y;
+var greaterthanequal = x>=y;
+
+```
+
+
+
+# Control Flow If statements For loops and while loops
+
+```python
 
 number =  10;
 start = 0;
@@ -55,17 +72,36 @@ for(var z = 10; z <=20; z+1;){
    print z;
    }
 
-#functions with no arguments
+```
+
+# Functions
+
+```python 
+
 fun helloword() {
     return "Hello world";
  }
  
-#functions with arguments
+ fun sumto(a){
+   var sum =  0;
+   for(var x = 0; x <=a; x+1;{
+     sum+x;
+     }
+     return sum;
+     }
+     
+    
+      
+ 
 fun addtogether(a b) {
   return a + b;
  }
  
+ ```
+ 
  # Classes
+ 
+ ```python
  
  class house {
    init(numberofrooms,typeofhouse);
@@ -80,6 +116,8 @@ fun addtogether(a b) {
       typeofhouse =  housetype;
       return typeofhouse;
       }
+ }
         
     
- 
+ var  my_house =  house(10,"Cottage");
+ ```
