@@ -104,7 +104,8 @@ def p_functionsmutiple(p):
 def p_variablelessthanterm(p):
     #Parser rule for  x < 10;
     'varlessthenterm : identifier lessthan term colon'
-    p[0] = ("varlessthanterm",p[1],p[2],p[3])
+    if p[1] in symboltable:	
+    	p[0] = ("varlessthanterm",p[1],p[2],p[3])
 
 def p_variablegreaterthanterm(p):
     'vargreaterthanterm : identifier greaterthan term colon'
