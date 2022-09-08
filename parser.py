@@ -2,7 +2,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 from Lexer import tokens
 
-symboltable = {}
+symboltable = {}#symbol table takes the form of symbolname = [type(),scope]
 
 def p_assignment(p):
     #assignment of single terms of variables eg var x = 10;
@@ -14,7 +14,7 @@ def p_assignment(p):
                   '''
 
     p[0] = ('assignment',p[2],p[3],p[4])
-    symboltable[p[1]] = p[3]# populate symbol table
+    symboltable[p[1]] = [type(p[4],"global"]
 
 
 
@@ -31,13 +31,17 @@ def p_assignmentofexpression(p):
                 | VAR identifier equals term  greaterthanequal term colon
                 '''
     p[0] = ("assignment",p[2],p[3],p[4],p[5],p[6])
+    if type(p[4]) == type(p[6]):
+	symboltable[p[2]] = [type(p[3]),"global"]
+    else:
+ 	 p_error("error")
 
 def p_variablechange(p):
     #rule for swapping variables x = y if y exists
     'varchange : identifier equals identifier colon'
-    if p[1] in symboltable and p[3] in symboltable:
-        p[1] = symboltable[p[3]]
-        p[0] = ("varchange",p[1],p[2],p[3])
+    if p[1] in symboltable and p[3] in symboltable:#Checks if both variables are symbol table and same scope
+	#TODO check the symbol table for both varaibles are in the same scope then update accordlying 
+        
 
     
 
