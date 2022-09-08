@@ -337,6 +337,11 @@ def p_plus(p):
     'expression : plus'
     p[0] = p[1]
 
+def p_block(p):
+    'block : rightclosure '
+    p[0] = p[1] 	
+	
+
 start = 'funmulti'
 parser = yacc.yacc(start=start)
 while True:
