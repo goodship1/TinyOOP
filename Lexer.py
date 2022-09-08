@@ -8,7 +8,7 @@ key_words = {"if":"IF","else":"ELSE","print":"PRINT","true":"TRUE",
 #Tokens list for tokensizing strings
 tokens = ["plus","minus","equals","colon","times","leftpara","rightpara",
             "leftclosure","rightclosure","integer","float","string","greaterthan","lessthan"
-            ,"identifier","whitespace","lessthanequal","greaterthanequal","float","equalequal","constructor"]+list(key_words.values())
+            ,"identifier","whitespace","lessthanequal","greaterthanequal","float","equalequal","constructor","comma"]+list(key_words.values())
    
 
 
@@ -165,7 +165,11 @@ def t_lessthan(t):
         t.type = key_words.get(t.value,"lessthan")
         return t 
 
-    
+def t_comma(t):
+	r','
+	t.type = key_words.get(t.value,"comma")
+	return t
+
 def t_print(t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = key_words.get(t.value,"print")
