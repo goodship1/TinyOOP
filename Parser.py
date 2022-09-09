@@ -14,7 +14,7 @@ def p_assignment(p):
                   '''
 
     p[0] = ('assignment',p[2],p[3],p[4])
-    symboltable[p[1]] = [type(p[4],"global"]
+    symboltable[p[1]] = [type(p[4]),"global"]
 
 
 
@@ -40,18 +40,18 @@ def p_variablechange(p):
     #rule for swapping variables x = y if y exists
     'varchange : identifier equals identifier colon'
     if p[1] in symboltable and p[3] in symboltable:#Checks if both variables are symbol table and same scope
-	#TODO check the symbol table for both varaibles are in the same scope then update accordlying 
+	#TODO check the symbol table for both varaibles are in the same scope then update accordlying
+	pass 
         
 
     
 
 def p_printstatement(p):
     # print statement of terms print name;
-    '''printstatement :PRINT term colon 
-                    | PRINT identifier colon
-                    | PRINT str colon
-                    '''
-    p[0] =("printstatement",p[2]) 
+    '''printstatement : PRINT term colon
+					  | PRINT str colon
+					  '''
+    p[0] = ("printstatement",p[2])  
 
 
 def p_printexpression(p):
@@ -69,8 +69,8 @@ def p_printexpression(p):
 
 def p_functioncall(p):
     '''funccall : identifier leftfunction identifier rightfunction colon
-				| identifier leftfunction identifier identifier' rightfunction colon
-				|identifier leftfunction rightfunction colon'''
+				| identifier leftfunction identifier identifier rightfunction colon
+				'''
     p[0] = ("function-call",p[2],p[4])
 
     
@@ -100,7 +100,7 @@ def p_functionsmutiple(p):
 				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier greaterthan identifier colon leftclosure
 				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier lessthan identifier colon leftclosure
 				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier greaterthanequal identifier colon leftclosure
-				| FUN indentifier leftfunction identifier identifier rightfuction rightclosure RETURN identifier equalequal identifier colon leftclosure'''
+				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier equalequal identifier colon leftclosure'''
     p[0] = ("funcexp",p[2],p[4] ,p[5],p[9],p[10],p[11])
     symboltable[p[2]] = p[0]
 
