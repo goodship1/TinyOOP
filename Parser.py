@@ -6,7 +6,7 @@ symboltable = {}#symbol table takes the form of symbolname = [type(),scope]
 
 def p_assignment(p):
     #assignment of single terms of variables eg var x = 10;
-    '''assignment : VAR identifier  equals  term colon
+    '''expression : VAR identifier  equals  term colon
                   | VAR identifier equals str colon
                   | VAR identifier equals true colon
                   | VAR identifier equals false colon
@@ -21,7 +21,7 @@ def p_assignment(p):
 def p_assignmentofexpression(p):
 	# assignment of expressions  var x = 1 + 1;
 	
-    '''assignment : VAR identifier equals term plus term colon
+    '''expression : VAR identifier equals term plus term colon
                 | VAR identifier equals term minus term colon
                 | VAR identifier equals term times term colon
                 | VAR identifier equals term lessthan term colon
@@ -39,35 +39,24 @@ def p_assignmentofexpression(p):
 def p_variablechange(p):
     #rule for swapping variables x = y if y exists
     'varchange : identifier equals identifier colon'
-    if p[1] in symboltable and p[3] in symboltable and p[1][1] == p[3][1]:
-	#check if both variables are in the same scope
-	change_variable = p[1] = p[3]
-	symboltable[change_variable] = symboltable[p[3]]#update symboltable of change
-	p[0] = ("variablechange",p[1],p[2],p[3])
-   else:
-	p_error("error")#raises a parser error on scope
-	
+    if p[1] in symboltable and p[3] in symboltable:
+		pass 
         
-def p_printvariable(p):
-    'printvariable : PRINT identifer colon'
-     if p[1] in symboltable:
-	 p[0] = ("printvariable",p[2])
-	
-	
-	
+
     
 
 def p_printstatement(p):
     # print statement of terms print name;
-    '''printstatement : PRINT term colon
-					  | PRINT str colon
-					  '''
+    '''expression : PRINT term colon
+		  | PRINT str colon
+                  | PRINT identifier colon
+		  '''
     p[0] = ("printstatement",p[2])  
 
 
 def p_printexpression(p):
 	#print expresssion rule eg print 1+1;
-    '''printexpression : PRINT term plus term colon
+    '''expression : PRINT term plus term colon
                        | PRINT term minus term colon
                        | PRINT term times term colon
                        | PRINT term lessthan term colon
@@ -93,27 +82,12 @@ def p_functions(p):
     p[0] = ("function",p[2],p[4],p[7],p[8])
     symboltable[p[2]] = p[0]
 
-def p_functionexpressions(p):
-    '''funcexp : FUN identifier leftfunction identifier rightfunction rightclosure varaddterm RETURN identifier colon leftclosure
-               | FUN identifier leftfunction identifier rightfunction rightclosure varminusterm RETURN identifier colon leftclosure
-               | FUN identifier leftfunction identifier rightfunction rightclosure vartimesterm RETURN identifier colon leftclosure
-               | FUN identifier leftfunction identifier rightfunction rightclosure varequalequalterm RETURN identifier colon leftclosure
-               | FUN identifier leftfunction identifier rightfunction rightclosure varlessthenterm RETURN identifier colon leftclosure
-               | FUN identifier leftfunction identifier rightfunction rightclosure vargreaterequalterm RETURN identifier colon leftclosure'''
-    p[0] = ("functionexpression",p[2],p[4],p[7],p[8],p[9])
+def p_functionnoreturn(p):
+    'funcexp : FUN identifier leftfunction identifier rightfunction rightclosure expression leftclosure'
+    p[0] = ("functionexp",p[2])
     symboltable[p[2]] = p[0]
 
-def p_functionsmutiple(p):
-    '''funmulti : FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier plus identifier colon leftclosure
-				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier minus identifier colon leftclosure
-				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier times identifier colon leftclosure
-				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN varequalequalvar colon leftclosure
-				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier greaterthan identifier colon leftclosure
-				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier lessthan identifier colon leftclosure
-				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier greaterthanequal identifier colon leftclosure
-				| FUN identifier leftfunction identifier identifier rightfunction rightclosure RETURN identifier equalequal identifier colon leftclosure'''
-    p[0] = ("funcexp",p[2],p[4] ,p[5],p[9],p[10],p[11])
-    symboltable[p[2]] = p[0]
+
 
 
 def p_variablelessthanterm(p):
@@ -205,16 +179,16 @@ def p_variablelessthanequal(p):
         p[0] = ("varlessthanequalvar",p[1],p[2],p[3])
         
 def p_vargreaterthanequalterm(p):
-    'vargreaterequalterm : identifier greaterthanequal term colon'
+    'expression : identifier greaterthanequal term colon'
     p[0] = ("vargreaterequalterm",p[1],p[2],p[3])
 
 def  p_equalequalterm(p):
-    'equalequalterm : term equalequal term colon'
+    'expression : term equalequal term colon'
     p[0] = ("equalequalterm",p[0],p[1],p[2])
 
 
 def p_varlessthanequalterm(p):
-    'varlessthanequalterm : identifier lessthanequal term colon'
+    'expression : identifier lessthanequal term colon'
     p[0] = ("varlessthanequalterm", p[1],p[2],p[3])
 
 
@@ -358,7 +332,7 @@ def p_block(p):
     p[0] = p[1] 	
 	
 
-start = 'funmulti'
+start = 'funcexp'
 parser = yacc.yacc(start=start)
 while True:
     try:
@@ -368,5 +342,4 @@ while True:
     if not s: continue
     result = parser.parse(s)
     print(result)
-
 
