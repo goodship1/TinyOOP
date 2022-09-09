@@ -39,11 +39,22 @@ def p_assignmentofexpression(p):
 def p_variablechange(p):
     #rule for swapping variables x = y if y exists
     'varchange : identifier equals identifier colon'
-    if p[1] in symboltable and p[3] in symboltable:#Checks if both variables are symbol table and same scope
-	#TODO check the symbol table for both varaibles are in the same scope then update accordlying
-	pass 
+    if p[1] in symboltable and p[3] in symboltable and p[1][1] == p[3][1]:
+	#check if both variables are in the same scope
+	change_variable = p[1] = p[3]
+	symboltable[change_variable] = symboltable[p[3]]#update symboltable of change
+	p[0] = ("variablechange",p[1],p[2],p[3])
+   else:
+	p_error("error")#raises a parser error on scope
+	
         
-
+def p_printvariable(p):
+    'printvariable : PRINT identifer colon'
+     if p[1] in symboltable:
+	 p[0] = ("printvariable",p[2])
+	
+	
+	
     
 
 def p_printstatement(p):
