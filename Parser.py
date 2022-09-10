@@ -2,7 +2,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 from Lexer import tokens
 
-symboltable = {}#symbol table takes the form of symbolname = [type(),scope]
+symboltable = {}#global symboltable stores global variables and global functions takes the form of symbol = [type,token scope,value]
 
 def p_assignment(p):
     #assignment of single terms of variables eg var x = 10;
@@ -11,10 +11,47 @@ def p_assignment(p):
                   | VAR identifier equals true colon
                   | VAR identifier equals false colon
                   | VAR identifier equals nil colon
-                  '''
 
+                  '''
     p[0] = ('assignment',p[2],p[3],p[4])
-    symboltable[p[1]] = [type(p[4]),"global"]
+    if p[4] == "nil":#checks if equals to nil
+        symboltable[p[2]] = ["nil","identifier","global"]#populates the symboltable 
+    
+    elif p[4] == "true" or p[4] == "false":
+        symboltable[p[2]] = ["bool","identifer","global"]
+    
+    else:
+        check_type = type(eval(str(p[4])))#checks the type of p[4] and then attaches to symboltable
+        symboltable[p[2]] = [check_type,"identifier","global",eval(p[4])]
+
+
+def p_assignmentvariables(p):
+    '''expression  : VAR identifier equals identifier plus identifier colon
+                   | VAR identifier equals identifier minus identifier colon
+                   | VAR identifier equals identifier times identifier colon
+                   | VAR identifier equals identifier greaterthan identifier colon
+                   | VAR identifier equals identifier lessthan identifier colon
+                   | VAR identifier equals identifier equalequal identifier colon
+                   '''
+    #first check if variables are in the symbol table and are same type and restrict operations such as bool + bool is a parse error
+    if p[4] in symboltable and p[6] in symboltable and symboltable[p[4]][0] == symboltable[p[6]][0]  \
+     and symboltable[p[4]][0] != "bool" and symboltable[p[6]][0] != "bool"\
+     and symboltable[p[4]][0] != "nil" and symboltable[p[6]][0] != "nil" and symboltable[p[4]][0] != "<type 'str'>" \
+     and symboltable[p[6]][0] != "<type 'str'>":
+		 p[0] = ("expression",p[2],p[3],symboltable[p[4]][3],p[5],symboltable[p[6]][3])
+		 #todo update the symbol
+    
+
+
+
+def p_expressionidentifier(p):
+    '''expression : identifier plus identifier colon
+                  | identifier minus identifier colon
+                  | identifier times identifier colon
+                  | identifier lessthan identifier colon
+                  | identifier greaterthan identifier colon
+                   '''
+    p[0]  = ("expression",p[1],p[2],p[3])
 
 
 
@@ -64,6 +101,9 @@ def p_printexpression(p):
                        | PRINT term equalequal term colon
                        | PRINT term greaterthanequal term colon
                        | PRINT term lessthanequal term colon
+                       | PRINT identifier plus identifier colon
+                       | PRINT identifier minus identifier colon
+
                        '''
     p[0] = ("printexpression",p[1],p[2],p[3])
 
@@ -83,7 +123,10 @@ def p_functions(p):
     symboltable[p[2]] = p[0]
 
 def p_functionnoreturn(p):
-    'funcexp : FUN identifier leftfunction identifier rightfunction rightclosure expression leftclosure'
+    '''funcexp : FUN identifier leftfunction identifier rightfunction rightclosure expression  leftclosure
+               | FUN identifier leftfunction identifier rightfunction rightclosure expression expression leftclosure
+               | FUN identifier leftfunction identifier rightfunction rightclosure expression expression expression leftclosure
+               '''
     p[0] = ("functionexp",p[2])
     symboltable[p[2]] = p[0]
 
@@ -332,7 +375,7 @@ def p_block(p):
     p[0] = p[1] 	
 	
 
-start = 'funcexp'
+start = 'expression'
 parser = yacc.yacc(start=start)
 while True:
     try:
@@ -342,4 +385,6 @@ while True:
     if not s: continue
     result = parser.parse(s)
     print(result)
+    print(symboltable)
+
 
