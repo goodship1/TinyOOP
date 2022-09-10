@@ -1,5 +1,5 @@
 # SmallLox
-A small programming language Implementation based on the  Lox programming Language. An overview of the small Lox programming language 
+A small Compiler written using python ply to lex and  Parse with the IR and code generation being handled by tinyllvm . An overview of the small Lox programming language . The small lox programming language is very small some what OOP programming language an Overview of some core features can be scene below 
 
 # Overview of the Syntax 
 
