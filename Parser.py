@@ -3,7 +3,8 @@ import ply.yacc as yacc
 from Lexer import tokens
 
 symboltable = {}#global symboltable stores global variables and global functions takes the form of symbol = [type,token scope,value]
-globalfunctions = {} # function global function symboltables 
+globalfunctions = {} # function global function symboltables
+class_symboltable = {} 
 def p_assignment(p):
     #assignment of single terms of variables eg var x = 10;
     '''expression : VAR identifier  equals  term colon
@@ -22,7 +23,7 @@ def p_assignment(p):
     
     else:
         check_type = type(eval(str(p[4])))#checks the type of p[4] and then attaches to symboltable
-        symboltable[p[2]] = [check_type,"identifier","global",eval(p[4])]
+        symboltable[p[2]] = [check_type,"identifier","global",eval(str(p[4]))]
 
 
 def p_assignmentvariables(p):
@@ -32,13 +33,14 @@ def p_assignmentvariables(p):
                    | VAR identifier equals identifier greaterthan identifier colon
                    | VAR identifier equals identifier lessthan identifier colon
                    | VAR identifier equals identifier equalequal identifier colon
+                   | VAR identifier equals identifier greaterthanequal identifier colon
+                   | VAR identifier equals identifier lessthanequal identifier colon
                    '''
     #first check if variables are in the symbol table and are same type and restrict operations such as bool + bool is a parse error
     if p[4] in symboltable and p[6] in symboltable and symboltable[p[4]][0] == symboltable[p[6]][0]  \
      and symboltable[p[4]][0] != "bool" and symboltable[p[6]][0] != "bool"\
      and symboltable[p[4]][0] != "nil" and symboltable[p[6]][0] != "nil" and symboltable[p[4]][0] != "<type 'str'>" \
      and symboltable[p[6]][0] != "<type 'str'>":
-		 #p[0] = ("expression",p[2],p[3],symboltable[p[4]][3],p[5],symboltable[p[6]][3])
 		 get_symbol_p4 = symboltable[p[4]][3]
 		 get_symbol_p5 =symboltable[p[4]][3]
 		 get_operation = p[5]
@@ -57,31 +59,41 @@ def p_assignmentvariables(p):
 			 if p[5] == '<':
 				 preform_operation = get_symbol_p4 < get_symbol_p5
 				 symboltable[p[2]] = [type(preform_operation),"identifier","global",preform_operation]
-			 
-				 
-				 	
-				 
-			 
-			 
-			 
-			 
-			 
-			 
-    
-
-
-
-def p_expressionidentifier(p):
-    '''expression : identifier plus identifier colon
-                  | identifier minus identifier colon
-                  | identifier times identifier colon
-                  | identifier lessthan identifier colon
-                  | identifier greaterthan identifier colon
-                   '''
-    p[0]  = ("expression",p[1],p[2],p[3])
-
-
-
+			 if p[5] == '==':
+				 preform_operation = get_symbol_p4  == get_symbol_p5
+				 symboltable[p[2]] = [type(preform_operation),"identifer","global",preform_operation]
+			 if p[5]  == "<=":
+				 preform_operation = get_symbol_p4 <= get_symbol_p5
+				 symboltable[p[2]] = [type(prefrom_operation),"identifer","global",preform_operation]
+			 if p[5] == '>=':
+					   prefrom_operation  = get_symbo_p4 >= get_symbol_p5
+					   symboltable[p[2]] = [type(preform_operation),"identifer","global",preform_operation]
+			 p[0] = ("assignment",p[2],p[3],symboltable[p[4]][3],p[5],symboltable[p[6]][3])
+		 elif type(1.0) == symboltable[p[4]][0] and type(1.0) == symboltable[p[6]][0]:
+				if p[5] == '+':
+				 preform_operation = get_symbol_p4 + get_symbol_p5
+				 #updating symbol table with new value
+				 symboltable[p[2]] = [type(preform_operation),"identitier","global",preform_operation]
+				if p[5] == '-':
+					preform_operation = get_symbol_p4 - get_symbol_p5
+					symboltable[p[2]] =[type(preform_operation),"identifer","global",preform_operation]
+				if p[5] == '*':
+					prefrom_operation = get_symbol_p4 * get_symbol_p5
+					symboltable[p[2]] = [type(preform_operation) ,"identifer", "global",preform_operation]
+				if p[5] == '<':
+					preform_operation = get_symbol_p4 < get_symbol_p5
+					symboltable[p[2]] = [type(preform_operation),"identifier","global",preform_operation]
+				if p[5] == '==':
+					preform_operation = get_symbol_p4  == get_symbol_p5
+					symboltable[p[2]] = [type(preform_operation),"identifer","global",preform_operation]
+				if p[5]  == "<=":
+					preform_operation = get_symbol_p4 <= get_symbol_p5
+					symboltable[p[2]] = [type(prefrom_operation),"identifer","global",preform_operation]
+				p[0] = ("assignment",p[2],p[3],symboltable[p[4]][3],p[5],symboltable[p[6]][3])
+		 else:
+				p_error("error")
+			
+				
 def p_assignmentofexpression(p):
 	# assignment of expressions  var x = 1 + 1;
 	
@@ -94,17 +106,78 @@ def p_assignmentofexpression(p):
                 | VAR identifier equals term lessthanequal term colon
                 | VAR identifier equals term  greaterthanequal term colon
                 '''
-    p[0] = ("assignment",p[2],p[3],p[4],p[5],p[6])
-    if type(p[4]) == type(p[6]):
-	symboltable[p[2]] = [type(p[3]),"global"]
-    else:
- 	 p_error("error")
+               # some type checking if they are same type eg float + float = float also int + int = int
+               #check types of terms if both the same then populate symbol table
+    check_type_p4 = eval(str(p[4]))
+    check_type_p6 = eval(str(p[6]))
+    if type(check_type_p4) == type(check_type_p6):
+				   operation = p[5]
+				   if operation == "+":
+					   preform_operation = check_type_p4 + check_type_p6
+					   #add new variable to symbol table
+					   check_type = type(preform_operation)
+					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
+					   p[0] = ("assignment",p[2],p[3],preform_operation)
+				   if operation == "-":
+					   preform_operation = check_type_p4 - check_type_p6
+					   #add new variable to symbol table
+					   check_type = type(preform_operation)
+					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
+					   p[0] = ("assignment",p[2],p[3],preform_operation)
+					   
+				   if operation == "*":
+					   preform_operation = check_type_p4 * check_type_p6
+					   #add new variable to symbol table
+					   check_type = type(preform_operation)
+					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
+					   p[0] = ("assignment",p[2],p[3],preform_operation)
+				   
+				   if operation == "<":
+					   preform_operation = check_type_p4 < check_type_p6
+					   #add new variable to symbol table
+					   check_type = type(preform_operation)
+					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
+					   p[0] = ("assignment",p[2],p[3],preform_operation)
+				   
+				   if operation == ">":
+					   preform_operation = check_type_p4 > check_type_p6
+					   #add new variable to symbol table
+					   check_type = type(preform_operation)
+					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
+					   p[0] = ("assignment",p[2],p[3],preform_operation)
+					
+				   if operation == "==":
+					   preform_operation = check_type_p4 == check_type_p6
+					   #add new variable to symbol table
+					   check_type = type(preform_operation)
+					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
+					   p[0] = ("assignment",p[2],p[3],preform_operation)
+					   
+				   if operation == ">=":
+					   preform_operation = check_type_p4 >= check_type_p6
+					   #add new variable to symbol table
+					   check_type = type(preform_operation)
+					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
+					   p[0] = ("assignment",p[2],p[3],preform_operation)
+				  
+				   if operation == "<=":
+					   preform_operation = check_type_p4 <= check_type_p6
+					   #add new variable to symbol table
+					   check_type = type(preform_operation)
+					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
+					   p[0] = ("assignment",p[2],p[3],preform_operation)
+				   
+    
 
-def p_variablechange(p):
+def p_assignmentofvariable(p):
     #rule for swapping variables x = y if y exists
-    'varchange : identifier equals identifier colon'
-    if p[1] in symboltable and p[3] in symboltable:
-		pass 
+    'expression : VAR identifier equals identifier colon'
+    if symboltable[p[2]] and symboltable[p[4]]:
+		#move p4 value into reassignment and update symboltable and scoope
+		get_p4_fromtable = symboltable[p[4]]
+		symboltable[p[2]] = get_p4_fromtable
+		p[0] = ("assignment",p[2],p[3],get_p4_fromtable)
+    
         
 
     
@@ -114,6 +187,7 @@ def p_printstatement(p):
     '''expression : PRINT term colon
 		  | PRINT str colon
                   | PRINT identifier colon
+                  | PRINT expression colon
 		  '''
     p[0] = ("printstatement",p[2])  
 
