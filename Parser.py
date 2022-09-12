@@ -7,11 +7,12 @@ globalfunctions = {} # function global function symboltables
 class_symboltable = {} 
 def p_assignment(p):
     #assignment of single terms of variables eg var x = 10;
-    '''expression : VAR identifier  equals  term colon
+    '''expression : VAR identifier  equals  Int colon
                   | VAR identifier equals str colon
                   | VAR identifier equals true colon
                   | VAR identifier equals false colon
                   | VAR identifier equals nil colon
+		  | VAR identifier equals Float colon
 
                   '''
     p[0] = ('assignment',p[2],p[3],p[4])
@@ -56,86 +57,37 @@ def p_assignmentvariables(p):
 def p_assignmentofexpression(p):
 	# assignment of expressions  var x = 1 + 1;
 	
-    '''expression : VAR identifier equals term plus term colon
-                | VAR identifier equals term minus term colon
-                | VAR identifier equals term times term colon
-                | VAR identifier equals term lessthan term colon
-                | VAR identifier equals term greaterthan term colon
-                | VAR identifier equals term equalequal term colon
-                | VAR identifier equals term lessthanequal term colon
-                | VAR identifier equals term  greaterthanequal term colon
+    '''expression : VAR identifier equals Int plus Int colon
+                | VAR identifier equals Int minus Int colon
+                | VAR identifier equals Int times Int colon
+                | VAR identifier equals Int lessthan Int colon
+                | VAR identifier equals Int greaterthan Int colon
+                | VAR identifier equals Int equalequal Int colon
+                | VAR identifier equals Int lessthanequal Int colon
+                | VAR identifier equals Int  greaterthanequal Int colon
+		| VAR identifier equals Float minus Float colon
+                | VAR identifier equals Float times Float colon
+                | VAR identifier equals Float lessthan Float colon
+                | VAR identifier equals Float greaterthan Float colon
+                | VAR identifier equals Float equalequal Float colon
+                | VAR identifier equals Float lessthanequal Float colon
+                | VAR identifier equals Float  greaterthanequal Float colon
+		| VAR identifier equals Float plus Float colon
                 '''
                # some type checking if they are same type eg float + float = float also int + int = int
                #check types of terms if both the same then populate symbol table
-    check_type_p4 = eval(str(p[4]))
-    check_type_p6 = eval(str(p[6]))
-    if type(check_type_p4) == type(check_type_p6):
-				   operation = p[5]
-				   if operation == "+":
-					   preform_operation = check_type_p4 + check_type_p6
-					   #add new variable to symbol table
-					   check_type = type(preform_operation)
-					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
-					   p[0] = ("assignment",p[2],p[3],preform_operation)
-				   if operation == "-":
-					   preform_operation = check_type_p4 - check_type_p6
-					   #add new variable to symbol table
-					   check_type = type(preform_operation)
-					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
-					   p[0] = ("assignment",p[2],p[3],preform_operation)
-					   
-				   if operation == "*":
-					   preform_operation = check_type_p4 * check_type_p6
-					   #add new variable to symbol table
-					   check_type = type(preform_operation)
-					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
-					   p[0] = ("assignment",p[2],p[3],preform_operation)
-				   
-				   if operation == "<":
-					   preform_operation = check_type_p4 < check_type_p6
-					   #add new variable to symbol table
-					   check_type = type(preform_operation)
-					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
-					   p[0] = ("assignment",p[2],p[3],preform_operation)
-				   
-				   if operation == ">":
-					   preform_operation = check_type_p4 > check_type_p6
-					   #add new variable to symbol table
-					   check_type = type(preform_operation)
-					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
-					   p[0] = ("assignment",p[2],p[3],preform_operation)
-					
-				   if operation == "==":
-					   preform_operation = check_type_p4 == check_type_p6
-					   #add new variable to symbol table
-					   check_type = type(preform_operation)
-					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
-					   p[0] = ("assignment",p[2],p[3],preform_operation)
-					   
-				   if operation == ">=":
-					   preform_operation = check_type_p4 >= check_type_p6
-					   #add new variable to symbol table
-					   check_type = type(preform_operation)
-					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
-					   p[0] = ("assignment",p[2],p[3],preform_operation)
-				  
-				   if operation == "<=":
-					   preform_operation = check_type_p4 <= check_type_p6
-					   #add new variable to symbol table
-					   check_type = type(preform_operation)
-					   symboltable[p[2]] = [check_type,"identifier","global",preform_operation]
-					   p[0] = ("assignment",p[2],p[3],preform_operation)
+		#TODO
+    
 				   
     
 
 def p_assignmentofvariable(p):
     #rule for swapping variables x = y if y exists
     'expression : VAR identifier equals identifier colon'
-    if symboltable[p[2]] and symboltable[p[4]]:
-		#move p4 value into reassignment and update symboltable and scoope
-		get_p4_fromtable = symboltable[p[4]]
-		symboltable[p[2]] = get_p4_fromtable
-		p[0] = ("assignment",p[2],p[3],get_p4_fromtable)
+	
+	p[0] = ("assignment",p[2],p[3],p[4])
+	#update symbol table
+	symboltable[p[2]] = [type(1),type(1.0),type(true),"nil","global"]
     
         
 
@@ -146,24 +98,48 @@ def p_printstatement(p):
     '''expression : PRINT term colon
 		  | PRINT str colon
                   | PRINT identifier colon
-                  | PRINT expression colon
+		  | PRINT true colon
+		  | PRINT false colon
+		  
 		  '''
-    p[0] = ("printstatement",p[2])  
+    p[0] = ("printstatement",p[2])
+    check_type = type(eval(str(p[2])))
+    if check_type == type(1):#symbol table allocation
+	symboltable[p[2]] = [type(1),"printstatement","global"]
+    elif check_type == type(1.0):#symbol table of float
+	symboltable[p[2]] = [type(1.0),"printstatment","global"]
+    elif check_type  == type("check"):
+	symboltable[p[2]] = [type("check"),"printstatement","global"]
+    elif check_type == type(true): 
+	symboltable[p[2] = [type(true),"printstatement","global"]
+    else:
+	symboltable[p[2]] = [type(1),type(1.0),type(true),type("check"),"printstatement","global"]	    
+	
+	
+	
+	
 
 
 def p_printexpression(p):
 	#print expresssion rule eg print 1+1;
-    '''expression : PRINT term plus term colon
-                       | PRINT term minus term colon
-                       | PRINT term times term colon
-                       | PRINT term lessthan term colon
-                       | PRINT term greaterthan term colon
-                       | PRINT term equalequal term colon
-                       | PRINT term greaterthanequal term colon
-                       | PRINT term lessthanequal term colon
+    '''expression : PRINT Int plus Int colon
+                       | PRINT Int minus Int colon
+                       | PRINT Int times Int colon
+                       | PRINT Int lessthan Int colon
+                       | PRINT Int greaterthan Int colon
+                       | PRINT Int equalequal Int colon
+                       | PRINT Int greaterthanequal Int colon
+                       | PRINT Int lessthanequal Int colon
                        | PRINT identifier plus identifier colon
                        | PRINT identifier minus identifier colon
-
+		       | PRINT Float plus Float colon
+                       | PRINT Float minus Float colon
+                       | PRINT Float times Float colon
+                       | PRINT Float lessthan Float colon
+                       | PRINT Float greaterthan Float colon
+                       | PRINT Float equalequal Float colon
+                       | PRINT Float greaterthanequal Float colon
+                       | PRINT Float lessthanequal Float colon
                        '''
     p[0] = ("printexpression",p[1],p[2],p[3])
 
@@ -391,12 +367,12 @@ def p_false(p):
 
 
 def p_integer(p):
-    'term : integer'
+    'Int : integer'
     p[0] = p[1]
 
 
 def p_float(p):
-    'term : float'
+    'Float : float'
     p[0] = p[1]
 
 def p_leftpara(p):
