@@ -2,7 +2,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 from Lexer import tokens
 
-symboltable = {}#global symboltable stores global variables and global functions takes the form of symbol = [type,token scope]
+symboltable = {}#global symboltable stores global variables and global functions takes the form of symbol = [type,token scope,value]
 globalfunctions = {} # function global function symboltables
 class_symboltable = {} 
 def p_assignment(p):
@@ -23,7 +23,7 @@ def p_assignment(p):
     
     else:
         check_type = type(eval(str(p[4])))#checks the type of p[4] and then attaches to symboltable
-        symboltable[p[2]] = [check_type,"identifier","global",eval(str(p[4]))]
+        symboltable[p[2]] = [check_type,"identifier","global"]
 
 
 def p_assignmentvariables(p):
@@ -36,10 +36,22 @@ def p_assignmentvariables(p):
                    | VAR identifier equals identifier greaterthanequal identifier colon
                    | VAR identifier equals identifier lessthanequal identifier colon
                    '''
-		p[0] = ("assignment",p[2],p[3],p[5],p[6])
-		symboltable[p[2]] = [type(1),"identifer","global"]
+    #first check if variables are in the symbol table and are same type and restrict operations such as bool + bool is a parse error
+	p[0] = ("assignment",p[2],p[3],p[4],p[5],p[6])
+	#now populate the symbol table
+	operation  = p[5]
+	if operation  == "+":
+		symboltable[p[2]] =  [type(1),type(1.0),"global"]
+	elif operation  == "-":
+		symboltable[p[2]] =  [type(1),type(1.0),"global"]
+    	
+	elif operation  == "*":
+		symboltable[p[2]] =  [type(1),type(1.0),"global"]
+	else:
+		symboltable[p[2]] = [type(True),"global"]
+	
+	p[0] = ("assignment",p[2],p[3],p[4],p[5],p[6])
 		
-			
 				
 def p_assignmentofexpression(p):
 	# assignment of expressions  var x = 1 + 1;
