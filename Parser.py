@@ -2,7 +2,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 from Lexer import tokens
 
-symboltable = {}#global symboltable stores global variables and global functions takes the form of symbol = [type,token scope,value]
+symboltable = {}#global symboltable stores global variables and global functions takes the form of symbol = [type,token scope]
 globalfunctions = {} # function global function symboltables
 class_symboltable = {} 
 def p_assignment(p):
@@ -36,62 +36,9 @@ def p_assignmentvariables(p):
                    | VAR identifier equals identifier greaterthanequal identifier colon
                    | VAR identifier equals identifier lessthanequal identifier colon
                    '''
-    #first check if variables are in the symbol table and are same type and restrict operations such as bool + bool is a parse error
-    if p[4] in symboltable and p[6] in symboltable and symboltable[p[4]][0] == symboltable[p[6]][0]  \
-     and symboltable[p[4]][0] != "bool" and symboltable[p[6]][0] != "bool"\
-     and symboltable[p[4]][0] != "nil" and symboltable[p[6]][0] != "nil" and symboltable[p[4]][0] != "<type 'str'>" \
-     and symboltable[p[6]][0] != "<type 'str'>":
-		 get_symbol_p4 = symboltable[p[4]][3]
-		 get_symbol_p5 =symboltable[p[4]][3]
-		 get_operation = p[5]
-		 if type(1) == symboltable[p[4]][0] and type(1) == symboltable[p[6]][0]:#some basic type checking 
-			 #checks for ints  what operation is being performed then preforms the operation then adds to symbol table 
-			 if p[5] == '+':
-				 preform_operation = get_symbol_p4 + get_symbol_p5
-				 #updating symbol table with new value
-				 symboltable[p[2]] = [type(preform_operation),"identitier","global",preform_operation]
-			 if p[5] == '-':
-				 preform_operation = get_symbol_p4 - get_symbol_p5
-				 symboltable[p[2]] =[type(preform_operation),"identifer","global",preform_operation]
-			 if p[5] == '*':
-				 prefrom_operation = get_symbol_p4 * get_symbol_p5
-				 symboltable[p[2]] = [type(preform_operation) ,"identifer", "global",preform_operation]
-			 if p[5] == '<':
-				 preform_operation = get_symbol_p4 < get_symbol_p5
-				 symboltable[p[2]] = [type(preform_operation),"identifier","global",preform_operation]
-			 if p[5] == '==':
-				 preform_operation = get_symbol_p4  == get_symbol_p5
-				 symboltable[p[2]] = [type(preform_operation),"identifer","global",preform_operation]
-			 if p[5]  == "<=":
-				 preform_operation = get_symbol_p4 <= get_symbol_p5
-				 symboltable[p[2]] = [type(prefrom_operation),"identifer","global",preform_operation]
-			 if p[5] == '>=':
-					   prefrom_operation  = get_symbo_p4 >= get_symbol_p5
-					   symboltable[p[2]] = [type(preform_operation),"identifer","global",preform_operation]
-			 p[0] = ("assignment",p[2],p[3],symboltable[p[4]][3],p[5],symboltable[p[6]][3])
-		 elif type(1.0) == symboltable[p[4]][0] and type(1.0) == symboltable[p[6]][0]:
-				if p[5] == '+':
-				 preform_operation = get_symbol_p4 + get_symbol_p5
-				 #updating symbol table with new value
-				 symboltable[p[2]] = [type(preform_operation),"identitier","global",preform_operation]
-				if p[5] == '-':
-					preform_operation = get_symbol_p4 - get_symbol_p5
-					symboltable[p[2]] =[type(preform_operation),"identifer","global",preform_operation]
-				if p[5] == '*':
-					prefrom_operation = get_symbol_p4 * get_symbol_p5
-					symboltable[p[2]] = [type(preform_operation) ,"identifer", "global",preform_operation]
-				if p[5] == '<':
-					preform_operation = get_symbol_p4 < get_symbol_p5
-					symboltable[p[2]] = [type(preform_operation),"identifier","global",preform_operation]
-				if p[5] == '==':
-					preform_operation = get_symbol_p4  == get_symbol_p5
-					symboltable[p[2]] = [type(preform_operation),"identifer","global",preform_operation]
-				if p[5]  == "<=":
-					preform_operation = get_symbol_p4 <= get_symbol_p5
-					symboltable[p[2]] = [type(prefrom_operation),"identifer","global",preform_operation]
-				p[0] = ("assignment",p[2],p[3],symboltable[p[4]][3],p[5],symboltable[p[6]][3])
-		 else:
-				p_error("error")
+		p[0] = ("assignment",p[2],p[3],p[5],p[6])
+		symboltable[p[2]] = [type(1),"identifer","global"]
+		
 			
 				
 def p_assignmentofexpression(p):
