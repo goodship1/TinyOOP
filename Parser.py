@@ -142,6 +142,38 @@ def p_printexpression(p):
                        | PRINT Float lessthanequal Float colon
                        '''
     p[0] = ("printexpression",p[1],p[2],p[3])
+    check_type_p2 = type(eval(str(p[2]])))
+    check_type_p4 = type(eval(str(p[4])))
+    operation = p[3]#gets operations
+    if check_type_p4 == type(1) and check_type_p4 == type(1) and operation == '+':
+		    symboltable[p[2]] = ["printstatement",type(1),"global"]
+    elif check_type_p4 == type(1) and check_type_p4 == type(1) and operation == '-':
+		    symboltable[p[2]] = ["printstatement",type(1),"global"]
+    elif check_type_p4 == type(1) and check_type_p4 == type(1) and operation == '*':
+		    symboltable[p[2]] = ["printstatement",type(1),"global"]
+    elif check_type_p4 == type(1) and check_type_p4 == type(1) and operation == '<':
+		    symboltable[p[2]] = ["printstatement",type(True),"global"]
+    elif check_type_p4 == type(1) and check_type_p4 == type(1) and operation == '>':
+		    symboltable[[p[2]] = ["printstatement",type(True),"global"]
+    elif check_type_p4 == type(1) and check_type_p4 == type(1) and operation == '==':
+		   symboltable[p[2]] = ["printstatement",type(True),"global"]
+    elif check_type_p4 == type(1) and check_type_p4 == type(1) and operation == '>=':
+		    symboltable[p[2]] =  ["printstatement",type(True),"global"]
+    elif check_type_p4 == type(1) and check_type_p4 == type(1) and operation == '<=':
+		    symboltable[p[2]] =  ["printstatement",type(True),"global"]
+    elif check_type_p4 == type(1.0) and check_type_p4 == type(1.0) and operation == '+':
+		    symboltable[p[2]] =  ["printstatement",type(1.0),"global"]
+    elif check_type_p4 == type(1.0) and check_type_p4 == type(1.0) and operation == '-':
+		    symboltable[p[2]] =  ["printstatement",type(1.0),"global"]			
+    elif check_type_p4 == type(1.0) and check_type_p4 == type(1.0) and operation == '*':
+		    symboltable[p[2]] =  ["printstatement",type(1.0),"global"]
+    
+
+				
+    
+		    
+		    
+		    
 
 def p_functioncall(p):
     '''funccall : identifier leftfunction identifier rightfunction colon
